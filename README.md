@@ -19,17 +19,16 @@ BeeSkilled-Week3/
   README.md
 ```
 
-### Deploy (Vercel)
-1. Upload the contents of this folder to a GitHub repository, including the `api/` directory.
-2. Import the GitHub repo at https://vercel.com/new.
-3. Use **Other** framework, root `./`, and default deployment settings.
-4. Add the **Production** environment variable `OPENWEATHER_API_KEY` with your private OpenWeatherMap API key. Use a newly rotated key if an old one was shared.
-5. Deploy. If you add or change the environment variable after deploying, redeploy.
-6. Open the deployment URL and search for `Kolkata`.
 
-> **Important:** GitHub Pages and opening `index.html` directly on your computer **do not run** `api/weather.mjs`. To use the live weather search, deploy this project to Vercel (or run it with a compatible local serverless development environment).
->
-> The API key is never included in this repository. Anyone can still call the public weather endpoint, so add rate limiting and monitor usage for larger deployments.
+## 🌐 Live Website
+
+[View My Week 3 Weather App](https://beeskilled-week3.vercel.app/)
+
+### Features
+- Real-time weather using OpenWeatherMap API
+- Search weather by city
+- Temperature, humidity and wind speed
+- Secure API integration using Vercel
 
 ### Technologies used
 HTML5 · CSS3 · Vanilla JavaScript · Vercel Functions · OpenWeatherMap API
