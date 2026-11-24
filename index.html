@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="BeeSkilled Week 3 Weather App powered by OpenWeatherMap." />
+  <title>Weather App | BeeSkilled Week 3</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root { color-scheme: dark; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: radial-gradient(circle at 20% 10%, #304b88 0%, transparent 40%),
+                  linear-gradient(135deg, #071528 0%, #173b75 100%);
+      font-family: Arial, Helvetica, sans-serif;
+      color: #fff;
+    }
+    .card {
+      width: min(100%, 450px);
+      padding: 34px 28px;
+      background: rgba(255, 255, 255, 0.09);
+      border: 1px solid rgba(255, 255, 255, 0.17);
+      border-radius: 24px;
+      box-shadow: 0 24px 65px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(12px);
+      text-align: center;
+    }
+    .eyebrow { color: #a5d8ff; font-size: 12px; letter-spacing: 0.18em; font-weight: bold; }
+    h1 { margin: 9px 0 6px; font-size: 30px; }
+    .subtitle { margin: 0 0 24px; color: #c6dcf6; font-size: 14px; }
+    form { display: flex; gap: 10px; }
+    input {
+      min-width: 0;
+      flex: 1;
+      padding: 13px 14px;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 11px;
+      background: rgba(255,255,255,0.12);
+      color: white;
+      font-size: 15px;
+      outline-offset: 3px;
+    }
+    input::placeholder { color: #d4e1f2; }
+    button {
+      border: none;
+      border-radius: 11px;
+      padding: 0 17px;
+      background: #70e3ef;
+      color: #072c46;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background .2s, transform .2s;
+    }
+    button:hover { background: #b1f5fa; transform: translateY(-2px); }
+    button:disabled { opacity: .65; cursor: wait; transform: none; }
+    #status { color: #ffdc93; min-height: 20px; margin: 20px 0 4px; font-size: 14px; }
+    #weatherResult { padding-top: 12px; }
+    [hidden] { display: none !important; }
+    #cityName { font-size: 23px; margin: 8px 0; }
+    .temperature { font-size: clamp(52px, 12vw, 76px); font-weight: 700; margin: 12px 0 2px; }
+    #condition { margin: 0 0 25px; color: #d8edff; text-transform: capitalize; }
+    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .stat { padding: 16px 10px; background: rgba(255,255,255,.11); border-radius: 12px; }
+    .stat span { display: block; font-size: 13px; color: #cfdfef; }
+    .stat strong { display: block; font-size: 22px; margin-top: 7px; }
+    footer { margin-top: 27px; color: #a9c5e2; font-size: 12px; }
+    @media (max-width: 390px) {
+      .card { padding: 26px 18px; }
+      form { flex-direction: column; }
+      button { padding: 13px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="eyebrow">BEESKILLED · WEEK 3</div>
+    <h1>☀️ Weather App</h1>
+    <p class="subtitle">Real-time weather powered by OpenWeatherMap</p>
+
+    <form id="weatherForm">
+      <input id="city" name="city" type="text" value="Kolkata"
+             maxlength="80" placeholder="Search a city" aria-label="City name" required />
+      <button id="searchButton" type="submit">Search</button>
+    </form>
+    <p id="status" role="status" aria-live="polite"></p>
+
+    <section id="weatherResult" aria-label="Weather results" hidden>
+      <h2 id="cityName"></h2>
+      <div id="temp" class="temperature"></div>
+      <p id="condition"></p>
+      <div class="stats">
+        <div class="stat"><span>💧 Humidity</span><strong id="humidity"></strong></div>
+        <div class="stat"><span>🌬️ Wind speed</span><strong id="wind"></strong></div>
+      </div>
+    </section>
+    <footer>HTML · CSS · JavaScript · OpenWeatherMap</footer>
+  </main>
+
+  <script>
+    const form = document.getElementById('weatherForm');
+    const statusText = document.getElementById('status');
+    const result = document.getElementById('weatherResult');
+    const button = document.getElementById('searchButton');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const city = document.getElementById('city').value.trim();
+      if (!city) return;
+
+      result.hidden = true;
+      button.disabled = true;
+      statusText.textContent = 'Fetching live weather...';
+
+      try {
+        // Same-origin call to the server-side Vercel function. No API key in this file.
+        const response = await fetch('/api/weather?city=' + encodeURIComponent(city));
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Could not load weather.');
+
+        document.getElementById('cityName').textContent = data.city + ', ' + data.country;
+        document.getElementById('temp').textContent = Math.round(data.temperature) + '°C';
+        document.getElementById('condition').textContent = data.condition;
+        document.getElementById('humidity').textContent = data.humidity + '%';
+        document.getElementById('wind').textContent = data.windSpeed + ' m/s';
+
+        result.hidden = false;
+        statusText.textContent = '';
+      } catch (error) {
+        statusText.textContent = 'Error: ' + error.message;
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
